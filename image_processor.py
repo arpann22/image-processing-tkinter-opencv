@@ -34,7 +34,57 @@ def show_image(img):
     img_label.image = img_tk
 
 #  File Menu 
-
+menu_bar = tk.Menu(root)
+root.config(menu=menu_bar)
+ 
+file_menu = tk.Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="File", menu=file_menu)
+ 
+def menu_open():
+    global current_file, original_img, history, redo_history
+    file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.jpg *.png *.jpeg")])
+    if not file_path:
+        return
+    img = cv2.imread(file_path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    original_img = img
+    current_file = file_path
+    history = [original_img.copy()]
+    redo_history.clear()
+    show_image(original_img)
+ 
+def menu_save():
+    global current_file, original_img
+    if original_img is None:
+        return
+    if not current_file:
+        menu_save_as()
+        return
+    save_img = cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(current_file, save_img)
+    messagebox.showinfo("Saved", f"Image saved: {os.path.basename(current_file)}")
+ 
+def menu_save_as():
+    global current_file, original_img
+    if original_img is None:
+        return
+    file_path = filedialog.asksaveasfilename(defaultextension=".png",
+                                             filetypes=[("PNG files", "*.png"), ("JPEG files", "*.jpg")])
+    if not file_path:
+        return
+    current_file = file_path
+    save_img = cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(current_file, save_img)
+    messagebox.showinfo("Saved", f"Image saved: {os.path.basename(current_file)}")
+ 
+def menu_exit():
+    root.destroy()
+ 
+file_menu.add_command(label="Open", command=menu_open)
+file_menu.add_command(label="Save", command=menu_save)
+file_menu.add_command(label="Save As", command=menu_save_as)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=menu_exit)
 
 #  Edit Menu 
 
