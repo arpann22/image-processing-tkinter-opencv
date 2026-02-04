@@ -116,7 +116,52 @@ def resize_image(val):
     show_image(original_img)
 
 # rotate image
-
+def rotate_image(angle):
+    global original_img, history, redo_history
+    if original_img is None:
+        return
+    if angle == 90:
+        rotated = cv2.rotate(original_img, cv2.ROTATE_90_CLOCKWISE)
+    elif angle == 180:
+        rotated = cv2.rotate(original_img, cv2.ROTATE_180)
+    elif angle == 270:
+        rotated = cv2.rotate(original_img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    else:
+        return
+    original_img = rotated
+    history.append(original_img.copy())
+    redo_history.clear()
+    show_image(original_img)
+ 
+# flip image:
+def flip_image(mode):
+    global original_img, history, redo_history
+    if original_img is None:
+        return
+    if mode == 'horizontal':
+        flipped = cv2.flip(original_img, 1)
+    elif mode == 'vertical':
+        flipped = cv2.flip(original_img, 0)
+    else:
+        return
+    original_img = flipped
+    history.append(original_img.copy())
+    redo_history.clear()
+    show_image(original_img)
+ 
+# Buttons
+# Rotate buttons
+rotate_frame = tk.Frame(left_frame)
+rotate_frame.pack(pady=5)
+tk.Button(rotate_frame, text="Rotate 90°", command=lambda: rotate_image(90), width=10).pack(side=tk.LEFT, padx=2)
+tk.Button(rotate_frame, text="Rotate 180°", command=lambda: rotate_image(180), width=10).pack(side=tk.LEFT, padx=2)
+tk.Button(rotate_frame, text="Rotate 270°", command=lambda: rotate_image(270), width=10).pack(side=tk.LEFT, padx=2)
+ 
+# Flip buttons
+flip_frame = tk.Frame(left_frame)
+flip_frame.pack(pady=5)
+tk.Button(flip_frame, text="Flip Horizontal", command=lambda: flip_image('horizontal'), width=15).pack(side=tk.LEFT, padx=2)
+tk.Button(flip_frame, text="Flip Vertical", command=lambda: flip_image('vertical'), width=15).pack(side=tk.LEFT, padx=2)
 
 tk.Button(left_frame, text="Open Image", command=menu_open, width=20).pack(pady=5)
 tk.Button(left_frame, text="Grayscale", command=convert_grayscale, width=20).pack(pady=5)
