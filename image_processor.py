@@ -87,6 +87,27 @@ file_menu.add_separator()
 file_menu.add_command(label="Exit", command=menu_exit)
 
 #  Edit Menu 
+edit_menu = tk.Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Edit", menu=edit_menu)
+ 
+def undo_action():
+    global history, original_img, redo_history
+    if len(history) <= 1:
+        return
+    redo_history.append(history.pop())
+    original_img = history[-1].copy()
+    show_image(original_img)
+ 
+def redo_action():
+    global history, original_img, redo_history
+    if not redo_history:
+        return
+    original_img = redo_history.pop()
+    history.append(original_img.copy())
+    show_image(original_img)
+ 
+edit_menu.add_command(label="Undo", command=undo_action)
+edit_menu.add_command(label="Redo", command=redo_action)
 
 
 #  Image Processing Functions 
